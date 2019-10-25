@@ -230,6 +230,12 @@ pub struct ThreadLocal<T> {
     init: fn() -> T,
 }
 
+impl<T: Default> Default for ThreadLocal<T> {
+    fn default() -> Self {
+        ThreadLocal::new(Default::default)
+    }
+}
+
 impl<T> fmt::Debug for ThreadLocal<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.pad("ThreadLocal {{ .. }}")

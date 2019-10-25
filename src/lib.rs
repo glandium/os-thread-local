@@ -305,6 +305,9 @@ impl<T> ThreadLocal<T> {
     /// This function will `panic!()` if the handle currently has its destructor
     /// running, and it **may** panic if the destructor has previously been run for
     /// this thread.
+    /// This function can also `panic!()` if the storage is uninitialized and there
+    /// is not enough available memory to allocate a new thread local storage for
+    /// the current thread, or if the OS primitives fail.
     pub fn with<R, F: FnOnce(&T) -> R>(&self, f: F) -> R {
         self.try_with(f)
             .expect("cannot access a TLS value during or after it is destroyed")
@@ -328,6 +331,9 @@ impl<T> ThreadLocal<T> {
     ///
     /// This function will `panic!()` if the storage is uninitialized and the
     /// initializer given to [`ThreadLocal::new`](#method.new) panics.
+    /// This function can also `panic!()` if the storage is uninitialized and there
+    /// is not enough available memory to allocate a new thread local storage for
+    /// the current thread, or if the OS primitives fail.
     pub fn try_with<R, F: FnOnce(&T) -> R>(&self, f: F) -> Result<R, AccessError> {
         unsafe {
             let ptr = oskey::get(self.key) as *mut ThreadLocalValue<T>;

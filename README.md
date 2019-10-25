@@ -11,9 +11,10 @@ On Windows, fiber-local storage is used. This acts like thread-local
 storage when fibers are unused, but also provides per-fiber values
 after fibers are created with e.g. `winapi::um::winbase::CreateFiber`.
 
-The [`thread_local`](https://crates.io/crates/thread_local) crate also provides
-per-object thread-local storage, with a different API, and different features,
-but with more performance overhead than this one.
+The [`thread_local`](https://crates.io/crates/thread_local) crate is an example
+of another crate that provides per-object thread-local storage, with a
+different API, and different features, but with more performance overhead than
+this one.
 
 # Examples
 

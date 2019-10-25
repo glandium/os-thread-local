@@ -13,6 +13,10 @@
 //! storage when fibers are unused, but also provides per-fiber values
 //! after fibers are created with `winapi::um::winbase::CreateFiber`.
 //!
+//! The [`thread_local`](https://crates.io/crates/thread_local) crate also
+//! provides per-object thread-local storage, with a different API, and
+//! different features, but with more performance overhead than this one.
+//!
 //! See [`ThreadLocal`] for more details.
 //!
 //!   [`ThreadLocal`]: struct.ThreadLocal.html

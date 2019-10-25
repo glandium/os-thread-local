@@ -2,16 +2,14 @@
 
 This library provides a `ThreadLocal` type which provides an alternative
 to `std::thread_local!` that always uses the thread-local storage
-primitives provided by the OS.
-
-Unlike `std::thread_local!`, `ThreadLocal` allows per-object thread-local
-storage, while providing a similar API.
+primitives provided by the OS, and allows per-object thread-local storage,
+while providing a similar API.
 
 On Unix systems, pthread-based thread-local storage is used.
 
 On Windows, fiber-local storage is used. This acts like thread-local
 storage when fibers are unused, but also provides per-fiber values
-after fibers are created with `winapi::um::winbase::CreateFiber`.
+after fibers are created with e.g. `winapi::um::winbase::CreateFiber`.
 
 The [`thread_local`](https://crates.io/crates/thread_local) crate also provides
 per-object thread-local storage, with a different API, and different features,
@@ -19,9 +17,10 @@ but with more performance overhead than this one.
 
 # Examples
 
-This is the same as the example in [`std::thread::LocalKey`], but adjusted
-to use `ThreadLocal` instead. To use it in a `static` context, a lazy
-initializer, such as [`once_cell::sync::Lazy`] or [`lazy_static!`] is required.
+This is the same as the example in the [`std::thread::LocalKey`] documentation,
+but adjusted to use `ThreadLocal` instead. To use it in a `static` context, a
+lazy initializer, such as [`once_cell::sync::Lazy`] or [`lazy_static!`] is
+required.
 
   [`std::thread::LocalKey`]: https://doc.rust-lang.org/std/thread/struct.LocalKey.html
   [`once_cell::sync::Lazy`]: https://docs.rs/once_cell/1.2.0/once_cell/sync/struct.Lazy.html

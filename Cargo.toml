@@ -1,0 +1,30 @@
+[package]
+name = "os-thread-local"
+version = "0.1.0"
+authors = ["Mike Hommey <mh@glandium.org>"]
+license = "Apache-2.0/MIT"
+edition = "2018"
+description = """OS-backed thread-local storage
+
+This library provides a [`ThreadLocal`] type which provides an alternative
+to `std::thread_local!` that always uses the thread-local storage
+primitives provided by the OS.
+
+Unlike `std::thread_local!`, [`ThreadLocal`] allows per-object thread-local
+storage, while providing a similar API.
+"""
+repository = "https://github.com/glandium/os-thread-local"
+readme = "README.md"
+keywords = ["os"]
+
+[target.'cfg(not(windows))'.dependencies.libc]
+version = "0.2"
+default-features = false
+
+[target.'cfg(windows)'.dependencies.winapi]
+version = "0.3"
+features = ["fibersapi"]
+
+[dev-dependencies]
+crossbeam-utils = "0.6"
+once_cell = "1"

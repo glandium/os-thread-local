@@ -23,5 +23,5 @@ before_script:
       sudo apt-get -y install gcc-multilib libc6-dev-i386;
     fi
 script:
-  - rustup default stable-$TARGET
+  - rustup default $TRAVIS_RUST_VERSION-$TARGET
   - cargo test --verbose --target=$TARGET

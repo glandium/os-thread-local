@@ -1,3 +1,8 @@
+// Parts of tests that were copied from the rust code-base are Copyright
+// The Rust Project Developers, and licensed under the MIT or Apache-2.0,
+// license, like the rest of this project. See the LICENSE-MIT and
+// LICENSE-APACHE files at the root of this crate.
+
 //! OS-backed thread-local storage
 //!
 //! This library provides a [`ThreadLocal`] type which provides an alternative

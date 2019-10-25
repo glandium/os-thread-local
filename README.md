@@ -1,10 +1,10 @@
 # OS-backed thread-local storage
 
-This library provides a [`ThreadLocal`] type which provides an alternative
+This library provides a `ThreadLocal` type which provides an alternative
 to `std::thread_local!` that always uses the thread-local storage
 primitives provided by the OS.
 
-Unlike `std::thread_local!`, [`ThreadLocal`] allows per-object thread-local
+Unlike `std::thread_local!`, `ThreadLocal` allows per-object thread-local
 storage, while providing a similar API.
 
 On Unix systems, pthread-based thread-local storage is used.
@@ -23,6 +23,7 @@ This is the same as the example in [`std::thread::LocalKey`], but adjusted
 to use `ThreadLocal` instead. To use it in a `static` context, a lazy
 initializer, such as [`once_cell::sync::Lazy`] or [`lazy_static!`] is required.
 
+  [`std::thread::LocalKey`]: https://doc.rust-lang.org/std/thread/struct.LocalKey.html
   [`once_cell::sync::Lazy`]: https://docs.rs/once_cell/1.2.0/once_cell/sync/struct.Lazy.html
   [`lazy_static!`]: https://docs.rs/lazy_static/1.4.0/lazy_static/
 

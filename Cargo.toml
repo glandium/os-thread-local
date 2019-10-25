@@ -15,6 +15,9 @@ repository = "https://github.com/glandium/os-thread-local"
 readme = "README.md"
 keywords = ["os"]
 
+[badges.travis-ci]
+repository = "glandium/os-thread-local"
+
 [target.'cfg(not(windows))'.dependencies.libc]
 version = "0.2"
 default-features = false

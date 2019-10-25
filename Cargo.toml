@@ -1,17 +1,15 @@
 [package]
 name = "os-thread-local"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Mike Hommey <mh@glandium.org>"]
 license = "Apache-2.0/MIT"
 edition = "2018"
-description = """OS-backed thread-local storage
+description = """OS-backed thread-local storage.
 
-This library provides a [`ThreadLocal`] type which provides an alternative
-to `std::thread_local!` that always uses the thread-local storage
-primitives provided by the OS.
-
-Unlike `std::thread_local!`, [`ThreadLocal`] allows per-object thread-local
-storage, while providing a similar API.
+This crate provides a `ThreadLocal` type as an alternative to
+`std::thread_local!` that allows per-object thread-local storage, while
+providing a similar API. It always uses the thread-local storage primitives
+provided by the OS.
 """
 repository = "https://github.com/glandium/os-thread-local"
 readme = "README.md"

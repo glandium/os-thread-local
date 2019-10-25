@@ -5,10 +5,10 @@
 
 //! OS-backed thread-local storage
 //!
-//! This library provides a [`ThreadLocal`] type which provides an alternative
-//! to `std::thread_local!` that always uses the thread-local storage
-//! primitives provided by the OS, and allows per-object thread-local storage,
-//! while providing a similar API.
+//! This crate provides a [`ThreadLocal`] type as an alternative to
+//! `std::thread_local!` that allows per-object thread-local storage, while
+//! providing a similar API. It always uses the thread-local storage primitives
+//! provided by the OS.
 //!
 //! On Unix systems, pthread-based thread-local storage is used.
 //!

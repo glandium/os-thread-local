@@ -340,24 +340,22 @@ impl<T> ThreadLocal<T> {
     /// is not enough available memory to allocate a new thread local storage for
     /// the current thread, or if the OS primitives fail.
     pub fn try_with<R, F: FnOnce(&T) -> R>(&self, f: F) -> Result<R, AccessError> {
-        unsafe {
-            let ptr = oskey::get(self.key) as *mut ThreadLocalValue<T>;
-            let value = NonNull::new(ptr).unwrap_or_else(|| {
-                // Equivalent to currently unstable Box::into_raw_non_null.
-                // https://github.com/rust-lang/rust/issues/47336#issuecomment-373941458
-                let result = NonNull::new_unchecked(Box::into_raw(Box::new(ThreadLocalValue {
-                    inner: (self.init)(),
-                    key: self.key,
-                })));
-                oskey::set(self.key, result.as_ptr() as *mut _);
-                result
-            });
-            // Avoid reinitializing a TLS that was destroyed.
-            if value != GUARD.cast() {
-                Ok(f(&value.as_ref().inner))
-            } else {
-                Err(AccessError { _private: () })
-            }
+        let ptr = unsafe { oskey::get(self.key) as *mut ThreadLocalValue<T> };
+        let value = NonNull::new(ptr).unwrap_or_else(|| unsafe {
+            // Equivalent to currently unstable Box::into_raw_non_null.
+            // https://github.com/rust-lang/rust/issues/47336#issuecomment-373941458
+            let result = NonNull::new_unchecked(Box::into_raw(Box::new(ThreadLocalValue {
+                inner: (self.init)(),
+                key: self.key,
+            })));
+            oskey::set(self.key, result.as_ptr() as *mut _);
+            result
+        });
+        // Avoid reinitializing a TLS that was destroyed.
+        if value != GUARD.cast() {
+            Ok(f(&unsafe { value.as_ref() }.inner))
+        } else {
+            Err(AccessError { _private: () })
         }
     }
 }

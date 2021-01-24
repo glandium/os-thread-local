@@ -1,9 +1,9 @@
 use core::fmt;
 use core::ptr::NonNull;
 use std::boxed::Box;
-use std::error::Error;
 
 use crate::oskey::{self, c_void};
+use crate::AccessError;
 
 /// A thread-local storage handle.
 ///
@@ -146,26 +146,6 @@ impl<T> fmt::Debug for ThreadLocal<T> {
         f.pad("ThreadLocal {{ .. }}")
     }
 }
-
-/// An error returned by [`ThreadLocal::try_with`](struct.ThreadLocal.html#method.try_with).
-#[derive(Clone, Copy, Eq, PartialEq)]
-pub struct AccessError {
-    _private: (),
-}
-
-impl fmt::Debug for AccessError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("AccessError").finish()
-    }
-}
-
-impl fmt::Display for AccessError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt("already destroyed", f)
-    }
-}
-
-impl Error for AccessError {}
 
 /// A wrapper holding values stored in TLS. We store a `Box<ThreadLocalValue<T>>`,
 /// turned into raw pointers.

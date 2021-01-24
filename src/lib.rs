@@ -28,6 +28,11 @@
 
 pub mod thread_local;
 
+use core::fmt;
+use std::error::Error;
+
+pub use thread_local::ThreadLocal;
+
 #[cfg(windows)]
 mod oskey {
     use winapi::um::fibersapi;
@@ -94,4 +99,24 @@ mod oskey {
         debug_assert_eq!(r, 0);
     }
 }
+
+/// An error returned by [`ThreadLocal::try_with`](struct.ThreadLocal.html#method.try_with).
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub struct AccessError {
+    _private: (),
+}
+
+impl fmt::Debug for AccessError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("AccessError").finish()
+    }
+}
+
+impl fmt::Display for AccessError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt("already destroyed", f)
+    }
+}
+
+impl Error for AccessError {}
 

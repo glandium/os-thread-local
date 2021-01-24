@@ -2,8 +2,8 @@ use core::fmt;
 use core::ptr::NonNull;
 use std::boxed::Box;
 
-use crate::oskey::{self, c_void};
-use crate::AccessError;
+use crate::oskey;
+use crate::{AccessError, ThreadLocalValue, GUARD, thread_local_drop};
 
 /// A thread-local storage handle.
 ///
@@ -147,24 +147,6 @@ impl<T> fmt::Debug for ThreadLocal<T> {
     }
 }
 
-/// A wrapper holding values stored in TLS. We store a `Box<ThreadLocalValue<T>>`,
-/// turned into raw pointers.
-struct ThreadLocalValue<T> {
-    inner: T,
-    key: oskey::Key,
-}
-
-const GUARD: NonNull<c_void> = NonNull::dangling();
-
-unsafe extern "system" fn thread_local_drop<T>(ptr: *mut c_void) {
-    let ptr = NonNull::new_unchecked(ptr as *mut ThreadLocalValue<T>);
-    if ptr != GUARD.cast() {
-        let value = Box::from_raw(ptr.as_ptr());
-        oskey::set(value.key, GUARD.as_ptr());
-        // value is dropped here, and the `Box` destroyed.
-    }
-}
-
 impl<T> ThreadLocal<T> {
     /// Creates a new thread-local storage handle.
     ///
@@ -232,6 +214,7 @@ impl<T> ThreadLocal<T> {
     /// the current thread, or if the OS primitives fail.
     pub fn try_with<R, F: FnOnce(&T) -> R>(&self, f: F) -> Result<R, AccessError> {
         let ptr = unsafe { oskey::get(self.key) as *mut ThreadLocalValue<T> };
+
         let value = NonNull::new(ptr).unwrap_or_else(|| unsafe {
             // Equivalent to currently unstable Box::into_raw_non_null.
             // https://github.com/rust-lang/rust/issues/47336#issuecomment-373941458

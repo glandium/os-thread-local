@@ -27,11 +27,16 @@
 //#![deny(missing_docs)]
 
 pub mod thread_local;
+pub mod thread_local_cell;
 
 use core::fmt;
+use core::ptr::NonNull;
 use std::error::Error;
 
+use crate::oskey::c_void;
+
 pub use thread_local::ThreadLocal;
+pub use thread_local_cell::ThreadLocalCell;
 
 #[cfg(windows)]
 mod oskey {
@@ -119,4 +124,23 @@ impl fmt::Display for AccessError {
 }
 
 impl Error for AccessError {}
+
+/// A wrapper holding values stored in TLS. We store a `Box<ThreadLocalValue<T>>`,
+/// turned into raw pointers.
+struct ThreadLocalValue<T> {
+    inner: T,
+    key: oskey::Key,
+}
+
+const GUARD: NonNull<c_void> = NonNull::dangling();
+
+/// Drops the local value from the calling thread.
+unsafe extern "system" fn thread_local_drop<T>(ptr: *mut c_void) {
+    let ptr = NonNull::new_unchecked(ptr as *mut ThreadLocalValue<T>);
+    if ptr != GUARD.cast() {
+        let value = Box::from_raw(ptr.as_ptr());
+        oskey::set(value.key, GUARD.as_ptr());
+        // value is dropped here, and the `Box` destroyed.
+    }
+}
 

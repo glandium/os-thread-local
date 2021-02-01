@@ -243,6 +243,11 @@ impl<T> Drop for ThreadLocalCell<T> {
     }
 }
 
+/// Since the value is always initialized by the calling thread, and the only shared field is a pure function,
+/// `ThreadLocalCell` is always safe to send between threads.
+/// Drop notes and restrictions still apply.
+unsafe impl<T> Send for ThreadLocalCell<T> {}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::ThreadLocalCell;

@@ -248,6 +248,11 @@ impl<T> Drop for ThreadLocalCell<T> {
 /// Drop notes and restrictions still apply.
 unsafe impl<T> Send for ThreadLocalCell<T> {}
 
+/// Since the value is always local to the thread (and therefore always accessed synchronously with that thread), and
+/// the only shared field is a pure function, `ThreadLocalCell` can be considered externally Sync.
+/// Drop notes and restrictions still apply.
+unsafe impl<T> Sync for ThreadLocalCell<T> {}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::ThreadLocalCell;
